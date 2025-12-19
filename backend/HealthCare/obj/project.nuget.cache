@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "KOVi4F107lE=",
+  "success": true,
+  "projectFilePath": "D:\\HclHackathon\\backend\\HealthCare\\HealthCare.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Rishit\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.1\\microsoft.aspnetcore.openapi.10.0.1.nupkg.sha512",
+    "C:\\Users\\Rishit\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512",
+    "C:\\Users\\Rishit\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.23.0\\microsoft.visualstudio.azure.containers.tools.targets.1.23.0.nupkg.sha512"
+  ],
+  "logs": []
+}
