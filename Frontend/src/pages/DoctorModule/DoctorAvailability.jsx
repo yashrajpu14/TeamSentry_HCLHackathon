@@ -1,29 +1,27 @@
+// src/pages/DoctorAvailability/DoctorAvailability.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./DoctorAvailability.css"; // Import the CSS file here
+import "./DoctorAvailability.css";
+import { doctorAvailabilityApi } from "../../api/doctorAvailability.api";
 
 const DoctorAvailability = () => {
   const navigate = useNavigate();
 
-  // --- State ---
   const [selectedDate, setSelectedDate] = useState("");
   const [timeSlots, setTimeSlots] = useState([{ start: "", end: "" }]);
   const [loading, setLoading] = useState(false);
 
-  // --- Handlers ---
   const handleSlotChange = (index, field, value) => {
     const updatedSlots = [...timeSlots];
     updatedSlots[index][field] = value;
     setTimeSlots(updatedSlots);
   };
 
-  const addSlotRow = () => {
-    setTimeSlots([...timeSlots, { start: "", end: "" }]);
-  };
+  const addSlotRow = () => setTimeSlots([...timeSlots, { start: "", end: "" }]);
 
   const removeSlotRow = (index) => {
     const updatedSlots = timeSlots.filter((_, i) => i !== index);
-    setTimeSlots(updatedSlots);
+    setTimeSlots(updatedSlots.length ? updatedSlots : [{ start: "", end: "" }]);
   };
 
   const handleSave = async () => {
@@ -38,26 +36,30 @@ const DoctorAvailability = () => {
       return;
     }
 
-    setLoading(true);
-
-    const user = JSON.parse(localStorage.getItem("user"));
-    const doctorId = user?.id || 1;
+    // IMPORTANT: In your backend, DoctorId is DoctorProfile.Id (not User.Id).
+    // If you only have userId in localStorage, create an endpoint like:
+    // GET /api/doctor/me -> returns doctorProfileId
+    const stored = localStorage.getItem("user"); // your code :contentReference[oaicite:0]{index=0}
+    const user = stored ? JSON.parse(stored) : null;
 
     const payload = {
-      doctorId: doctorId,
-      date: selectedDate,
-      slots: validSlots,
+      doctorId,
+      date: selectedDate, // "YYYY-MM-DD"
+      slots: validSlots.map((s) => ({ start: s.start, end: s.end })),
     };
 
-    console.log("Sending to Backend:", payload);
+    setLoading(true);
 
     try {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      alert(`Availability saved for ${selectedDate}!`);
+      const res = await doctorAvailabilityApi.generate(payload);
+      alert(`Slots regenerated for ${selectedDate} (Created: ${res.data.createdSlots})`);
       navigate("/dashboard");
     } catch (error) {
-      alert("Failed to save availability.");
+      const msg =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to save availability.";
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -68,7 +70,6 @@ const DoctorAvailability = () => {
       <div className="availability-card">
         <h2 className="page-title">Set Your Availability</h2>
 
-        {/* --- Date Selection --- */}
         <div className="form-group">
           <label className="form-label">Select Date</label>
           <input
@@ -80,12 +81,9 @@ const DoctorAvailability = () => {
           />
         </div>
 
-        {/* --- Time Slots Section --- */}
         <div className="slots-section">
           <label className="form-label">Available Time Slots</label>
-          <p className="helper-text">
-            Add the start and end time for your shifts on this day.
-          </p>
+          <p className="helper-text">Add the start and end time for your shifts on this day.</p>
 
           {timeSlots.map((slot, index) => (
             <div key={index} className="slot-row">
@@ -94,9 +92,7 @@ const DoctorAvailability = () => {
                 <input
                   type="time"
                   value={slot.start}
-                  onChange={(e) =>
-                    handleSlotChange(index, "start", e.target.value)
-                  }
+                  onChange={(e) => handleSlotChange(index, "start", e.target.value)}
                   className="form-input time-input"
                 />
               </div>
@@ -106,20 +102,13 @@ const DoctorAvailability = () => {
                 <input
                   type="time"
                   value={slot.end}
-                  onChange={(e) =>
-                    handleSlotChange(index, "end", e.target.value)
-                  }
+                  onChange={(e) => handleSlotChange(index, "end", e.target.value)}
                   className="form-input time-input"
                 />
               </div>
 
-              {/* Remove Button */}
               {timeSlots.length > 1 && (
-                <button
-                  onClick={() => removeSlotRow(index)}
-                  className="btn-remove"
-                  title="Remove Slot"
-                >
+                <button onClick={() => removeSlotRow(index)} className="btn-remove" title="Remove Slot">
                   ✕
                 </button>
               )}
@@ -131,7 +120,6 @@ const DoctorAvailability = () => {
           </button>
         </div>
 
-        {/* --- Save Button --- */}
         <div className="form-actions">
           <button
             onClick={handleSave}
