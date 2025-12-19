@@ -99,6 +99,12 @@ const Home = () => {
               >
                 Sign Up
               </button>
+                            <button
+                className="btn btn-primary"
+                onClick={() => navigate("/doctor/register")}
+              >
+                Sign Up as Doctor
+              </button>
             </>
           )}
         </div>

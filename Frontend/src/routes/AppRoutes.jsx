@@ -20,6 +20,7 @@ import PharmacyFinder from "../pages/PharmacyFinder";
 // --- NEW IMPORT ---
 import BookAppointment from "../pages/PatientModule/BookAppointment";
 import DoctorAvailability from "../pages/DoctorModule/DoctorAvailability"; // Import the new file
+import DoctorSignUp from "../pages/LoginModule/DoctorSignUp";
 
 function AppRoutes() {
   return (
@@ -28,6 +29,7 @@ function AppRoutes() {
       <Route element={<PublicOnly />}>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/doctor/register" element={<DoctorSignUp />} />
         <Route path="/medicines-nearby" element={<PharmacyFinder />} />
         <Route path="/" element={<Home />} />
         {/* Catch-all for public: redirect to Home or Login */}
