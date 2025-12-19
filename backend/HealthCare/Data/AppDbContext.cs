@@ -10,7 +10,7 @@ public class AppDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<DoctorProfile> DoctorProfiles => Set<DoctorProfile>();
     public DbSet<UserSession> UserSessions => Set<UserSession>();
-
+    public DbSet<DoctorSlot> DoctorSlots => Set<DoctorSlot>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
@@ -25,6 +25,18 @@ public class AppDbContext : DbContext
         .WithOne()
         .HasForeignKey<DoctorProfile>(d => d.UserId)
         .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<DoctorSlot>()
+            .HasOne(s => s.Doctor)
+            .WithMany()
+            .HasForeignKey(s => s.DoctorId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<DoctorSlot>()
+            .HasOne(s => s.Patient)
+            .WithMany()
+            .HasForeignKey(s => s.PatientId)
+            .OnDelete(DeleteBehavior.Restrict);
 
     }
 

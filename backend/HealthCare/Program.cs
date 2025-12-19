@@ -60,7 +60,8 @@ builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.Configure<CloudinaryOptions>(builder.Configuration.GetSection("Cloudinary"));
 builder.Services.AddScoped<IImageStorage, CloudinaryImageStorage>();
-
+builder.Services.AddScoped<IDoctorSlotRepository, DoctorSlotRepository>();
+builder.Services.AddScoped<IDoctorAvailabilityService, DoctorAvailabilityService>();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 var app = builder.Build();
