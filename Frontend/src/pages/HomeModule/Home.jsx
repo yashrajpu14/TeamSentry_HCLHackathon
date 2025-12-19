@@ -1,12 +1,26 @@
-// src/pages/Home.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./Home.css"; // Ensure your CSS is imported here
+import "./Home.css";
 
 const Home = () => {
   const navigate = useNavigate();
 
-  // --- 1. Added Testimonial Data ---
+  // --- 1. Check Login Status ---
+  // We check if a user is stored in localStorage (or use your AuthContext here)
+  const user = localStorage.getItem("user");
+
+  // --- 2. Handle 'Book Now' Click ---
+  const handleBookNow = () => {
+    if (user) {
+      // User is logged in -> Go straight to booking
+      navigate("/book-appointment");
+    } else {
+      // User is NOT logged in -> Go to Login first
+      // We pass "state" so the Login page knows where to go after success
+      navigate("/login", { state: { from: "/book-appointment" } });
+    }
+  };
+
   const testimonials = [
     {
       id: 1,
@@ -62,27 +76,31 @@ const Home = () => {
             Contact Us
           </a>
 
-          {/* Navigate to the existing Login route */}
-          <button
-            className="btn btn-secondary"
-            onClick={() => navigate("/login")}
-          >
-            Login
-          </button>
+          {/* Conditional Navigation: Show Dashboard if logged in, else Show Login/Signup */}
+          {user ? (
+            <button
+              className="btn btn-secondary"
+              onClick={() => navigate("/dashboard")}
+            >
+              Dashboard
+            </button>
+          ) : (
+            <>
+              <button
+                className="btn btn-secondary"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </button>
 
-          {/* Navigate to the existing Signup route */}
-          <button
-            className="btn btn-primary"
-            onClick={() => navigate("/signup")}
-          >
-            Sign Up
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={() => navigate("/doctor/register")}
-          >
-            Sign Up as Doctor
-          </button>
+              <button
+                className="btn btn-primary"
+                onClick={() => navigate("/signup")}
+              >
+                Sign Up
+              </button>
+            </>
+          )}
         </div>
       </nav>
 
@@ -92,7 +110,11 @@ const Home = () => {
           <div className="hero-text">
             <h1>Your Health, Our Priority</h1>
             <p>Book appointments with top specialists instantly.</p>
-            <button className="btn btn-primary large">Book Now</button>
+
+            {/* --- UPDATED BUTTON with onClick handler --- */}
+            <button className="btn btn-primary large" onClick={handleBookNow}>
+              Book Now
+            </button>
           </div>
         </section>
 
@@ -112,7 +134,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* --- 2. Added Testimonials Section Here --- */}
+        {/* --- Testimonials Section --- */}
         <section className="testimonials-section">
           <h3>Patient Stories</h3>
           <div className="slider-container">
